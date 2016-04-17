@@ -17,6 +17,7 @@ public class Shapeshit : MonoBehaviour {
 
 	bool canPoop;
 	public bool isPooping = false;
+	public GameObject victory;
 
 	// Use this for initialization
 	void Start () {
@@ -72,12 +73,24 @@ public class Shapeshit : MonoBehaviour {
 
 
 		// you have to limit the chunkCount because deeply nested rigidbodies will break Unity
-		if ( chunks.Count > 0 && (Input.GetMouseButtonUp(0) || chunks.Count > jointDist * 32) ) {
+		if ( chunks.Count > 0 && (Input.GetMouseButtonUp(0) || chunks.Count > jointDist * 16) ) {
 			Detach();
 		}
+
+		// win detection
+		bool didIWin = true;
+		foreach ( var target in ShitTarget.allTargets ) {
+			if ( !target.triggered ) {
+				didIWin = false;
+				break;
+			}
+		}
+
+		victory.SetActive( didIWin );
+
 	}
 
-	const int jointDist = 2;
+	const int jointDist = 4;
 	public void Detach () {
 		if ( chunks.Count == 0 || !isPooping )
 			return;
@@ -90,7 +103,7 @@ public class Shapeshit : MonoBehaviour {
 			rb = Jointify( rb, i );
 		}
 
-		rb.AddForce( transform.forward * 100f * chunks.Count);
+		rb.AddForce( transform.forward * 500f * chunks.Count);
 		chunks.Clear();
 		canPoop = false;
 	}
